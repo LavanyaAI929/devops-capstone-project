@@ -1,23 +1,19 @@
-"""
-Package: service
-Package for the application models and service routes
-This module creates and configures the Flask app and sets up the logging
-and SQL database
-"""
 import sys
 from flask import Flask
 from service import config
 from service.common import log_handlers
+from flask_cors import CORS  # <-- Added this import
 
 # Create Flask application
 app = Flask(__name__)
 app.config.from_object(config)
 
-# Import the routes After the Flask app is created
-# pylint: disable=wrong-import-position, cyclic-import, wrong-import-order
+# Initialize CORS
+CORS(app)  # <-- Added this line to enable CORS
+
+# Import the routes after the Flask app is created
 from service import routes, models  # noqa: F401 E402
 
-# pylint: disable=wrong-import-position
 from service.common import error_handlers, cli_commands  # noqa: F401 E402
 
 # Set up logging for production

@@ -51,3 +51,5 @@ urllib3==2.3.0
 Werkzeug==2.1.2
 wrapt==1.17.2
 zipp==3.21.0
+Flask-Cors==3.1.1
+Flask-Cors==3.1.1
