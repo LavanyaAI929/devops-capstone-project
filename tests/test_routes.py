@@ -1,10 +1,3 @@
-"""
-Account API Service Test Suite
-
-Test cases can be run with the following:
-  nosetests -v --with-spec --spec-color
-  coverage report -m
-"""
 import os
 import logging
 from unittest import TestCase
@@ -123,4 +116,38 @@ class TestAccountService(TestCase):
         )
         self.assertEqual(response.status_code, status.HTTP_415_UNSUPPORTED_MEDIA_TYPE)
 
-    # ADD YOUR TEST CASES HERE ...
+    def test_list_accounts(self):
+        """It should List all Accounts"""
+        self._create_accounts(3)  # Create some accounts to list
+        response = self.client.get(BASE_URL)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        accounts = response.get_json()
+        self.assertEqual(len(accounts), 3)  # Make sure we have 3 accounts
+
+    def test_read_account(self):
+        """It should Read an Account by ID"""
+        account = self._create_accounts(1)[0]  # Create a single account
+        response = self.client.get(f"{BASE_URL}/{account.id}")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.get_json()
+        self.assertEqual(data["name"], account.name)
+
+    def test_update_account(self):
+        """It should Update an Account by ID"""
+        account = self._create_accounts(1)[0]  # Create a single account
+        updated_account = account.serialize()
+        updated_account["name"] = "Updated Name"
+        response = self.client.put(f"{BASE_URL}/{account.id}", json=updated_account)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.get_json()
+        self.assertEqual(data["name"], "Updated Name")
+
+    def test_delete_account(self):
+        """It should Delete an Account by ID"""
+        account = self._create_accounts(1)[0]  # Create a single account
+        response = self.client.delete(f"{BASE_URL}/{account.id}")
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        
+        # Verify deletion
+        response = self.client.get(f"{BASE_URL}/{account.id}")
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
