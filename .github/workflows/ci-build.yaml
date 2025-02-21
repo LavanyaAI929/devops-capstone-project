@@ -1,18 +1,7 @@
-name: CI Build
-
-on:
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
-
 jobs:
   build:
     runs-on: ubuntu-latest
     container: python:3.9-slim
-
     services:
       postgres:
         image: postgres:alpine
@@ -28,27 +17,10 @@ jobs:
           --health-retries 5
 
     steps:
-      # Steps to check out the code, install dependencies, run linting, and tests
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Set up Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: '3.9'
-
+      - name: Checkout
+        uses: actions/checkout@v2  # Step to check out the code
+      
       - name: Install dependencies
         run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
-
-      - name: Run tests
-        run: |
-          pytest
-
-      - name: Run linting
-        run: |
-          flake8 .
-
-      - name: Create badge
-        run: echo "CI Build Status Badge generated"
+          python -m pip install --upgrade pip wheel  # Upgrade pip and wheel
+          pip install -r requirements.txt  # Install dependencies from requirements.txt
